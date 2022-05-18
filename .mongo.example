@@ -1,0 +1,6 @@
+#----------
+# MongoDB configuration
+# This is used for initializing the MongoDB container via docker-compose.yml
+#-----------
+MONGO_INITDB_ROOT_USERNAME=
+MONGO_INITDB_ROOT_PASSWORD=
