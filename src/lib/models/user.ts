@@ -52,17 +52,34 @@ export async function create(name: string, email: string, password: string): Pro
     }
 }
 
-export async function get(id: string): Promise<User | null> {
+export async function get(id: string | null, email: string | null = null): Promise<User | null> {
     try {
-        if (!ObjectId.isValid(id)) {
-            return null
+        const client = (await mongo.getClient())!;
+        let request = {};
+
+        if (email) {
+            request = {
+                email: email.toLowerCase()
+            }
+        }
+
+        if (id) {
+            if (!ObjectId.isValid(id)) {
+                return null
+            }
+
+            request = {
+                _id: new ObjectId(id)
+            }
         }
         
-        const client = (await mongo.getClient())!;
+        if (!email && !id) {
+            throw {
+                error: "The email and _id of a GET user request is both null."
+            }
+        }
 
-        const user = await client.db('aroma').collection('users').findOne({
-            _id: new ObjectId(id)
-        });
+        const user = await client.db('aroma').collection('users').findOne(request);
         
         if (user) {
             return {

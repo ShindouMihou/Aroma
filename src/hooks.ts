@@ -6,7 +6,8 @@ import { ObjectId } from 'mongodb'
 import cookieSignature from 'cookie-signature'
 
 export async function handle({ event, resolve }: any) {
-    const cookies = parse(event.request.headers.cookie || '')
+    const cookies = parse(event.request.headers.get('cookie') || '')
+    let url = new URL(event.request.url);
 
     event.locals = {
         user: false
@@ -16,7 +17,7 @@ export async function handle({ event, resolve }: any) {
         const session = cookieSignature.unsign(cookies.session, configuration('APP_SIGNATURE') || '')
 
         if (session) {
-            const userId = authenticator.get(cookies.session)
+            const userId = authenticator.get(session)
 
             if (userId) {
                 const user = await (await mongo.getClient())!.db('aroma').collection('users').findOne({
@@ -37,7 +38,7 @@ export async function handle({ event, resolve }: any) {
 
     const response = await resolve(event)
 
-    if (!event.locals.user) {
+    if (!event.locals.user && !url.pathname.toLowerCase().startsWith('/api/auth')) {
         response.headers.append('Set-Cookie', 'session=; Path=/; Max-Age=-1')
     }
 
