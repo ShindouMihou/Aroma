@@ -9,8 +9,9 @@
     "prepare": "svelte-kit sync",
     "check": "svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-check --tsconfig ./tsconfig.json --watch",
+    "mailwind:book_deletion": "npx mailwind --input-html ./resources/emails/book_deletion.html --output-html ./resources/emails/build/book_deletion.html",
     "mailwind:verification": "npx mailwind --input-html ./resources/emails/verification.html --output-html ./resources/emails/build/verification.html",
-    "generate:mails": "npm run mailwind:verification && node ./resources/compiler/aromatic.js"
+    "generate:mails": "npm run mailwind:verification && npm run mailwind:book_deletion && node ./resources/compiler/aromatic.js"
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "next",

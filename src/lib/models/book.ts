@@ -1,6 +1,9 @@
+import configuration from "$lib/configuration";
+import AromaticEmails from "$lib/email";
 import mongo from "$lib/mongo";
+import AromaticEmailTemplates from "$lib/templates/emails";
 import { ObjectId } from "mongodb";
-import type Account from "./user";
+import Account from "./user";
 
 export class Book {
     _id: string;
@@ -112,6 +115,39 @@ export class Book {
     }
 
     /**
+     * Deletes this book and all related information. This is an irreversible action and should email the user 
+     * when it occurs as an extra measure. It doesn't request for verification since that would complicate the 
+     * entire process itself.
+     * 
+     * @returns The delete acknowledgement response of MongoDB.
+     */
+    public async delete() {
+        return mongo.getClient().then(async (client) => {
+            await client!.db('aroma').collection('books').deleteOne({
+                _id: new ObjectId(this._id)
+            })
+
+            await client!.db('aroma').collection('likes').deleteMany({
+                book: new ObjectId(this._id)
+            })
+
+            await client!.db('aroma').collection('bookmarks').deleteMany({
+                book: new ObjectId(this._id)
+            })
+
+            await client!.db('aroma').collection('chapters').deleteMany({
+                book: new ObjectId(this._id)
+            })
+        }).then(() => Account.withId(this.author).then(author => AromaticEmails.send(
+            'aromatic@erisa.one', 
+            author!.email, 
+            `URGENT: ${this.title} was deleted from Aroma`, 
+            undefined, 
+            AromaticEmailTemplates.book_deletion(this, configuration('SUPPORT_EMAIL') || '')
+        )))
+    }
+
+    /**
      * Updates an {@link Book}'s fields to reflect a newer state without replacing the entire 
      * document from the database.
      * 
@@ -134,6 +170,19 @@ export class Book {
     public static async withId(id: string): Promise<Book | null> {
         return Book.find({
             _id: new ObjectId(id)
+        })
+    }
+
+    /**
+    * Finds many book that matches the given author, returns empty if there isn't.
+    * 
+    * @param id The id of the book to find.
+    * @returns The books that matched the authors, otherwise none.
+    */
+    public static async withAuthor(id: string): Promise<Book[]> {
+        return Book.findMany({
+            author: new ObjectId(id),
+            published: true
         })
     }
 
@@ -186,9 +235,50 @@ export class Book {
                 console.error(err)
 
                 throw {
-                    error: "An internal error occurred while trying to get the user."
+                    error: "An internal error occurred while trying to get the book."
                 }
             })
+    }
+
+
+    /**
+    * Finds many books that matches the given specifications, returns empty if there isn't.
+    * 
+    * @param request The specifications of the books to find.
+    * @returns The books that matched the specifications, otherwise none.
+    */
+     public static async findMany(request: object): Promise<Book[]> {
+        return mongo.getClient()
+            .then(client => client!.db('aroma').collection('books').find(request))
+            .then(cursor => cursor.map(result => new Book(
+                result._id.toString(), result.title, result.description, result.author, result.cover, result.published, result.status
+            )).toArray()).catch(err => {
+                console.error(err)
+
+                throw {
+                    error: "An internal error occurred while trying to get the books."
+                }
+            })
+    }
+
+    /**
+     * Creates a new book on the given account, this book is not visible until it is has at least one chapter published which the state of 
+     * this book would then change to published. It will also be created with the default cover photo first.
+     * 
+     * @param title The title of the book to create.
+     * @param description The description of the book.
+     * @param author The author of the book.
+     * @returns The book instance that was created.
+     */
+    public static async create(title: string, description: string, author: Account): Promise<Book> {
+        const book = new Book(
+            '', title, description, author._id, 'default.jpg', false, BookStatus.ONGOING
+        );
+
+        return mongo.getClient().then(client => client!.db('aroma').collection('books').insertOne(book.without('_id')).then(document => {
+            book._id = document.insertedId.toString()
+            return book
+        }))
     }
 }
 

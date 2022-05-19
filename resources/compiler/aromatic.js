@@ -3,6 +3,9 @@ import { minify } from 'html-minifier'
 
 const TEMPLATES = {}
 const FUNCTIONS = []
+const IMPORTS = [
+    "import type { Book } from \"$lib/models/book\";"
+]
 
 function functionTemplates() {
     /**
@@ -12,6 +15,7 @@ function functionTemplates() {
      * ----------------
      */
     FUNCTIONS.push(`verification(link: string) { return \`${TEMPLATES['verification']}\`; }`);
+    FUNCTIONS.push(`book_deletion(book: Book, support: string) { return \`${TEMPLATES['book_deletion']}\`; }`);
 }
 
 
@@ -69,8 +73,9 @@ async function main() {
 
     console.log('Generating ./src/lib/templates/emails.ts')
 
-    let compiledFile = WARNING;
+    let compiledFile = IMPORTS;
     compiledFile += "\n"
+    compiledFile += WARNING;
 
     let compiledFunctions = ""
 

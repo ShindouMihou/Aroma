@@ -3,15 +3,11 @@ import Account from "$lib/models/user"
 import { authenticate, sign } from "$lib/auth/authentication";
 import cookieSignature from 'cookie-signature'
 import configuration from "$lib/configuration";
+import AromaticRouteResponses from "$lib/templates/responses";
 
 export async function post(event: RequestEvent) {
     if (event.locals.user) {
-        return {
-            body: {
-                error: "You cannot perform this action."
-            },
-            status: 401
-        }
+        return AromaticRouteResponses.permitNotGranted;
     }
 
     const body = await event.request.json()
@@ -39,11 +35,6 @@ export async function post(event: RequestEvent) {
         }
     } catch (err: any) {
         console.error(err)
-        return {
-            body: {
-                error: "An internal error occurred while trying to authenticate."
-            },
-            status: 500
-        }
+        return AromaticRouteResponses.internalError;
     }
 }

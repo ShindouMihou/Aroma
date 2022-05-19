@@ -2,7 +2,7 @@ import * as authenticator from '$lib/auth/authentication'
 import configuration from '$lib/configuration'
 import { parse } from 'cookie'
 import cookieSignature from 'cookie-signature'
-import * as UserBase from '$lib/models/user'
+import Account, * as UserBase from '$lib/models/user'
 
 export async function handle({ event, resolve }: any) {
     const cookies = parse(event.request.headers.get('cookie') || '')
@@ -19,7 +19,7 @@ export async function handle({ event, resolve }: any) {
             const userId = authenticator.get(session)
 
             if (userId) {
-                const user = await UserBase.get(userId)
+                const user = await Account.withId(userId)
 
                 if (user) {
                     event.locals = {

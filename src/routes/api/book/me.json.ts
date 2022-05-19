@@ -1,3 +1,4 @@
+import { Book } from "$lib/models/book";
 import AromaticRouteResponses from "$lib/templates/responses";
 import type { RequestEvent } from "@sveltejs/kit/types/private";
 
@@ -7,6 +8,8 @@ export async function get(event: RequestEvent) {
     }
 
     return {
-        body: event.locals.user
+        body: {
+            books: await Book.withAuthor(event.locals.user._id)
+        }
     }
 }
