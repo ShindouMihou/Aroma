@@ -1,8 +1,8 @@
 import configuration from "$lib/configuration";
 import mongo from "$lib/mongo";
-import type { User } from "$lib/types/user";
 import * as jwt from "jsonwebtoken";
 import bcrypt from 'bcrypt';
+import type Account from "$lib/models/user";
 
 /**
  * Generates a 30 days lifetime identifier token that is used to identify the user. This uses a JWT with the 
@@ -11,7 +11,7 @@ import bcrypt from 'bcrypt';
  * @param user The user to referece for generating this identifier token.
  * @returns A simple identifier token that contains the id of the user in a JWT.
  */
-export function sign(user: User): string {
+export function sign(user: Account): string {
     if (!configuration('JWT_SECRET')) {
         throw {
             error: 'JWT_SECRET is not configured, please configure it.'
@@ -36,7 +36,7 @@ export function sign(user: User): string {
  * @param user The user to reference for generating this verification token.
  * @returns The verification token which should return the email address and id of the user in a JWT.
  */
-export function verification(user: User): string {
+export function verification(user: Account): string {
     if (!configuration('JWT_SECRET')) {
         throw {
             error: 'JWT_SECRET is not configured, please configure it.'

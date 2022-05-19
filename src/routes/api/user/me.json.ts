@@ -11,11 +11,9 @@ export async function get(event: RequestEvent) {
         }
     }
 
-    if (event.locals.user) {
-        return {
-            body: {
-                user: event.locals.user
-            }
+    return {
+        body: {
+            user: event.locals.user
         }
     }
 

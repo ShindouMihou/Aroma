@@ -1,5 +1,5 @@
 import type { RequestEvent } from "@sveltejs/kit/types/private";
-import * as UserBase from "$lib/models/user"
+import Account from "$lib/models/user"
 import { authenticate, sign } from "$lib/auth/authentication";
 import cookieSignature from 'cookie-signature'
 import configuration from "$lib/configuration";
@@ -24,7 +24,7 @@ export async function post(event: RequestEvent) {
         const result = await authenticate(request.email, request.password)
 
         if (result) {
-            const cookie = await cookieSignature.sign(sign((await UserBase.get(null, request.email))!), configuration('APP_SIGNATURE') || '')
+            const cookie = await cookieSignature.sign(sign((await Account.withEmail(request.email))!), configuration('APP_SIGNATURE') || '')
 
             return {
                 status: 204,
