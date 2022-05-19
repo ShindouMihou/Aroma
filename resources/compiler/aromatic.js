@@ -1,4 +1,5 @@
 import { readdirSync, readFileSync, writeFileSync } from "fs"
+import { minify } from 'html-minifier'
 
 const TEMPLATES = {}
 const FUNCTIONS = []
@@ -47,8 +48,20 @@ async function main() {
 
     for (const template of compiled) {
         console.log('Reading ' + template.name + "...")
-        TEMPLATES[template.name.replace('.html', '')] = readFileSync('./resources/emails/build/' + template.name, {
+        TEMPLATES[template.name.replace('.html', '')] = minify(readFileSync('./resources/emails/build/' + template.name, {
             encoding: 'utf8'
+        }), {
+            collapseWhitespace: true,
+            removeComments: true,
+            removeOptionalTags: true,
+            removeRedundantAttributes: true,
+            removeScriptTypeAttributes: true,
+            removeTagWhitespace: true,
+            useShortDoctype: true,
+            minifyCSS: true,
+            minifyJS: true,
+            sortAttributes: true,
+            sortClassName: true
         })
     }
 
