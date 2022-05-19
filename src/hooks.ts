@@ -1,9 +1,8 @@
 import * as authenticator from '$lib/auth/authentication'
 import configuration from '$lib/configuration'
-import mongo from '$lib/mongo'
 import { parse } from 'cookie'
-import { ObjectId } from 'mongodb'
 import cookieSignature from 'cookie-signature'
+import * as UserBase from '$lib/models/user'
 
 export async function handle({ event, resolve }: any) {
     const cookies = parse(event.request.headers.get('cookie') || '')
@@ -20,16 +19,11 @@ export async function handle({ event, resolve }: any) {
             const userId = authenticator.get(session)
 
             if (userId) {
-                const user = await (await mongo.getClient())!.db('aroma').collection('users').findOne({
-                    _id: new ObjectId(userId)
-                })
-
+                const user = await UserBase.get(userId)
 
                 if (user) {
                     event.locals = {
-                        user: {
-                            _id: userId
-                        }
+                        user: user
                     }
                 }
             }
@@ -47,6 +41,6 @@ export async function handle({ event, resolve }: any) {
 
 export async function getSession(event: any) {
     return {
-        user: event.locals.user
+        user: event.locals.user._id
     }
 }

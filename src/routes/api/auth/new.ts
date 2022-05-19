@@ -1,5 +1,6 @@
 import type { RequestEvent } from "@sveltejs/kit/types/private";
 import * as UserBase from "$lib/models/user"
+import { verification } from "$lib/auth/authentication";
 
 export async function post(event: RequestEvent) {
     if (event.locals.user) {
@@ -20,10 +21,12 @@ export async function post(event: RequestEvent) {
 
     try {
         const user = await UserBase.create(request.name, request.email, request.password)
+        const token = await verification(user)
 
         return {
             body: {
-                user: user
+                user: user,
+                token: token
             }
         }
     } catch (err: any) {

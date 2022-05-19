@@ -90,7 +90,7 @@ export async function get(id: string | null, email: string | null = null): Promi
                 avatar_hash: user.avatar_hash,
                 email: user.email,
                 name: user.name,
-                verified: false
+                verified: user.verified || false
             }
         }
 

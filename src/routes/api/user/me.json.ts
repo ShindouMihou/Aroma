@@ -11,12 +11,10 @@ export async function get(event: RequestEvent) {
         }
     }
 
-    const user = await UserBase.get(event.locals.user._id)
-
-    if (user) {
+    if (event.locals.user) {
         return {
             body: {
-                user: user
+                user: event.locals.user
             }
         }
     }
