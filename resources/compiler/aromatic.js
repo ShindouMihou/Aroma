@@ -27,15 +27,25 @@ async function main() {
         })
     }
 
-    FUNCTIONS['verification'] = `function verification(link: string) { return \`${TEMPLATES['verification']}\`; }`
+    FUNCTIONS['verification'] = `verification(link: string) { return \`${TEMPLATES['verification']}\`; }`
     console.log('Generating ./src/lib/templates/emails.ts')
 
     let compiledFile = WARNING;
     compiledFile += "\n"
-    
+
+    let compiledFunctions = ""
+
     for (const entry of Object.entries(FUNCTIONS)) {
-        compiledFile += "export " + entry[1]
+        compiledFunctions += "\n"
+        compiledFunctions += "  public static " + entry[1]
+        compiledFunctions += "\n"
     }
+
+    compiledFile += `
+export default class AromaticEmailTemplates {
+    ${compiledFunctions}
+}
+    `
 
     writeFileSync('./src/lib/templates/emails.ts', compiledFile)
 }

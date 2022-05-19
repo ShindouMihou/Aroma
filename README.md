@@ -4,7 +4,7 @@ Aroma is a possible incoming open-source web-novel platform that is written unde
 ## 🎡 Progress
 This is the current progress of Aroma and a little roadmap for the future.
 - [x] Authentication backend
-- [ ] Email Verification
+- [x] Email Verification
 - [ ] Book creation, deletion and editing.
 - [ ] Liking, views, bookmarking, reading list.
 - [ ] Chapter creation, deletion, editing.
