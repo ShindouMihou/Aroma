@@ -25,8 +25,7 @@ export async function post(event: RequestEvent) {
 
         return {
             body: {
-                user: user,
-                token: token
+                user: user
             }
         }
     } catch (err: any) {
