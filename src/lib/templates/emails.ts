@@ -6,9 +6,8 @@
  * Please do not modify this file but instead modify the template file under `resources/compiler/aromatic.js`.
  */
 
-
 export default class AromaticEmailTemplates {
-    
+   
   public static verification(link: string) { return `<html>
     <body class="px-6 py-8 font-sans" style="padding-left: 24px; padding-right: 24px; padding-top: 32px; padding-bottom: 32px; font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'; color: #fff; background-color: #1E293B;">
         <nav>
@@ -44,4 +43,3 @@ export default class AromaticEmailTemplates {
 `; }
 
 }
-    

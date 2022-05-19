@@ -1,7 +1,32 @@
 import { readdirSync, readFileSync, writeFileSync } from "fs"
 
 const TEMPLATES = {}
-const FUNCTIONS = {}
+const FUNCTIONS = []
+
+function functionTemplates() {
+    /**
+     * ----------------
+     * Email template functions
+     * You can add your email template functions here as specified by the README.md
+     * ----------------
+     */
+    FUNCTIONS.push(`verification(link: string) { return \`${TEMPLATES['verification']}\`; }`);
+}
+
+
+
+
+
+
+
+
+
+/*
+ * Beyond this section lies the internal code of the Aromatic file where the file generation and 
+ * other details that you may not be interested in are located.
+ * 
+ * If all you are doing is adding a new template then please limit yourself to the method above.
+ */
 
 
 const WARNING = `
@@ -27,7 +52,8 @@ async function main() {
         })
     }
 
-    FUNCTIONS['verification'] = `verification(link: string) { return \`${TEMPLATES['verification']}\`; }`
+    functionTemplates()
+
     console.log('Generating ./src/lib/templates/emails.ts')
 
     let compiledFile = WARNING;
@@ -35,17 +61,15 @@ async function main() {
 
     let compiledFunctions = ""
 
-    for (const entry of Object.entries(FUNCTIONS)) {
+    for (const entry of FUNCTIONS) {
         compiledFunctions += "\n"
-        compiledFunctions += "  public static " + entry[1]
+        compiledFunctions += "  public static " + entry
         compiledFunctions += "\n"
     }
 
-    compiledFile += `
-export default class AromaticEmailTemplates {
-    ${compiledFunctions}
-}
-    `
+    compiledFile += "export default class AromaticEmailTemplates {\n"
+    compiledFile += "   " + compiledFunctions + "\n"
+    compiledFile += "}"
 
     writeFileSync('./src/lib/templates/emails.ts', compiledFile)
 }
