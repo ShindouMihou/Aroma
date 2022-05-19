@@ -37,17 +37,17 @@ npm run generate:mails
 
 If you are creating a new email template, then add another npm run command that compiles the emails from Tailwind to plain CSS. An example of which is:
 ```json
-    "mailwind:verification": "npx mailwind --input-html ./resources/emails/verification.html --output-html ./resources/emails/build/verification.html",
+"mailwind:verification": "npx mailwind --input-html ./resources/emails/verification.html --output-html ./resources/emails/build/verification.html",
 ```
 
 After which, you have to also tell `generate:mails` to run that command as well. In this case, it would be:
 ```json
-    "generate:mails": "npm run mailwind:verification && node ./resources/compiler/aromatic.js"
+"generate:mails": "npm run mailwind:verification && node ./resources/compiler/aromatic.js"
 ```
 
 Then you can modify `resources/compiler/aromatic.js` to also create a function for that specific template:
 ```javascript
-    FUNCTIONS.push(`verification(link: string) { return \`${TEMPLATES['verification']}\`; }`);
+FUNCTIONS.push(`verification(link: string) { return \`${TEMPLATES['verification']}\`; }`);
 ```
 
 You can then run the following command to generate the mails: `npm run generate:mails` and you can then use the e-mails inside the code:
