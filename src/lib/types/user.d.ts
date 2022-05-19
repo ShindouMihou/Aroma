@@ -3,5 +3,6 @@ export interface User {
     name: string,
     email: string,
     avatar_hash: string,
-    about_me: string
+    about_me: string,
+    verified: boolean
 }

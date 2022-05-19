@@ -24,7 +24,8 @@ export async function create(name: string, email: string, password: string): Pro
             about_me: 'None has been set.',
             avatar_hash: 'default.jpg',
             email: email,
-            name: name
+            name: name,
+            verified: false
         })
 
         const user: User = {
@@ -32,7 +33,8 @@ export async function create(name: string, email: string, password: string): Pro
             about_me: 'None has been set.',
             avatar_hash: 'default.jpg',
             email: email,
-            name: name
+            name: name,
+            verified: false
         }
 
         client.db('aroma').collection('userSecrets').insertOne({
@@ -41,7 +43,7 @@ export async function create(name: string, email: string, password: string): Pro
         })
 
         return user
-    } catch (err) {
+    } catch (err: any) {
         if (err.error) {
             throw err
         }
@@ -87,7 +89,8 @@ export async function get(id: string | null, email: string | null = null): Promi
                 about_me: user.about_me,
                 avatar_hash: user.avatar_hash,
                 email: user.email,
-                name: user.name
+                name: user.name,
+                verified: false
             }
         }
 

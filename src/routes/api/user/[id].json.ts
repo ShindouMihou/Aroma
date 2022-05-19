@@ -11,7 +11,8 @@ export async function get(event: RequestEvent) {
                     id: user._id.toString(),
                     name: user.name,
                     avatar_hash: user.avatar_hash,
-                    about_me: user.about_me
+                    about_me: user.about_me,
+                    verified: user.verified
                 }
             }
         }
