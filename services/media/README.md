@@ -1,0 +1,1 @@
+Moved to [Silva](https://github.com/ShindouMihou/Silva) to enable further usage with other platforms, please follow the installation instructions there once it is ready.
